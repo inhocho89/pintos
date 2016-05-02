@@ -1,0 +1,560 @@
+.func	threads/start.S	/^.func start$/
+.func	threads/switch.S	/^.func switch_threads$/
+.func	threads/switch.S	/^.func switch_entry$/
+.func	threads/intr-stubs.S	/^.func intr_entry$/
+.func	threads/intr-stubs.S	/^.func intr_exit$/
+.func	threads/intr-stubs.S	/^.func intr##NUMBER##_stub;			\\$/
+.globl	threads/start.S	/^.globl start$/
+.globl	threads/loader.S	/^.globl start$/
+.globl	threads/switch.S	/^.globl switch_threads$/
+.globl	threads/switch.S	/^.globl thread_stack_ofs$/
+.globl	threads/switch.S	/^.globl switch_entry$/
+.globl	threads/switch.S	/^.globl schedule_tail$/
+.globl	threads/intr-stubs.S	/^.globl intr_handler$/
+.globl	threads/intr-stubs.S	/^.globl intr_exit$/
+.globl	threads/intr-stubs.S	/^.globl intr_stubs$/
+.globl	threads/intr-stubs.S	/^.globl intr##NUMBER##_stub;                     \\$/
+.section	threads/start.S	/^.section .start$/
+ASSERT	lib/debug.h	/^#define ASSERT(CONDITION)                         /
+ASSERT	lib/debug.h	/^#define ASSERT(CONDITION) ((void) 0)$/
+BITMASK	threads/vaddr.h	/^#define BITMASK(SHIFT, CNT) (((1ul << (CNT)) - 1) /
+DIV_ROUND_UP	lib/round.h	/^#define DIV_ROUND_UP(X, STEP) (((X) + (STEP) - 1) /
+MAX	threads/thread.c	/^#define MAX(a,b) ((a) >= (b) ? a : b)$/
+MIN	threads/thread.c	/^#define MIN(a,b) ((a) <= (b) ? a : b)$/
+Minit	threads/init.c	/^int main (void) NO_RETURN;$/
+NOT_REACHED	lib/debug.h	/^#define NOT_REACHED() PANIC ("executed an unreacha/
+NOT_REACHED	lib/debug.h	/^#define NOT_REACHED() for (;;)$/
+PANIC	lib/debug.h	/^#define PANIC(...) debug_panic (__FILE__, __LINE__/
+PRINTF_FORMAT	lib/debug.h	/^#define PRINTF_FORMAT(FMT, FIRST) __attribute__ ((/
+ROUND_DOWN	lib/round.h	/^#define ROUND_DOWN(X, STEP) ((X) \/ (STEP) * (STEP)/
+ROUND_UP	lib/round.h	/^#define ROUND_UP(X, STEP) (((X) + (STEP) - 1) \/ (S/
+__divdi3	lib/arithmetic.c	/^__divdi3 (long long n, long long d) $/
+__moddi3	lib/arithmetic.c	/^__moddi3 (long long n, long long d) $/
+__printf	lib/stdio.c	/^__printf (const char *format,$/
+__udivdi3	lib/arithmetic.c	/^__udivdi3 (unsigned long long n, unsigned long lon/
+__umoddi3	lib/arithmetic.c	/^__umoddi3 (unsigned long long n, unsigned long lon/
+__vprintf	lib/stdio.c	/^__vprintf (const char *format, va_list args,$/
+_start	lib/user/entry.c	/^_start (int argc, char *argv[]) $/
+acquire_console	lib/kernel/console.c	/^acquire_console (void) $/
+active_pd	userprog/pagedir.c	/^active_pd (void) $/
+add_char	lib/user/console.c	/^add_char (char c, void *aux_) $/
+alloc_frame	threads/thread.c	/^alloc_frame (struct thread *t, size_t size) $/
+allocate_tid	threads/thread.c	/^allocate_tid (void) $/
+arena_to_block	threads/malloc.c	/^arena_to_block (struct arena *a, size_t idx) $/
+arg_cnt	threads/loader.S	/^arg_cnt:$/
+args	threads/loader.S	/^args:$/
+atoi	lib/stdlib.c	/^atoi (const char *s) $/
+barrier	threads/synch.h	/^#define barrier() asm volatile ("" : : : "memory")/
+binary_search	lib/stdlib.c	/^binary_search (const void *key, const void *array,/
+bit_mask	lib/kernel/bitmap.c	/^bit_mask (size_t bit_idx) $/
+bitmap_all	lib/kernel/bitmap.c	/^bitmap_all (const struct bitmap *b, size_t start, /
+bitmap_any	lib/kernel/bitmap.c	/^bitmap_any (const struct bitmap *b, size_t start, /
+bitmap_buf_size	lib/kernel/bitmap.c	/^bitmap_buf_size (size_t bit_cnt) $/
+bitmap_contains	lib/kernel/bitmap.c	/^bitmap_contains (const struct bitmap *b, size_t st/
+bitmap_count	lib/kernel/bitmap.c	/^bitmap_count (const struct bitmap *b, size_t start/
+bitmap_create	lib/kernel/bitmap.c	/^bitmap_create (size_t bit_cnt) $/
+bitmap_create_in_buf	lib/kernel/bitmap.c	/^bitmap_create_in_buf (size_t bit_cnt, void *block,/
+bitmap_destroy	lib/kernel/bitmap.c	/^bitmap_destroy (struct bitmap *b) $/
+bitmap_dump	lib/kernel/bitmap.c	/^bitmap_dump (const struct bitmap *b) $/
+bitmap_file_size	lib/kernel/bitmap.c	/^bitmap_file_size (const struct bitmap *b) $/
+bitmap_flip	lib/kernel/bitmap.c	/^bitmap_flip (struct bitmap *b, size_t bit_idx) $/
+bitmap_mark	lib/kernel/bitmap.c	/^bitmap_mark (struct bitmap *b, size_t bit_idx) $/
+bitmap_none	lib/kernel/bitmap.c	/^bitmap_none (const struct bitmap *b, size_t start,/
+bitmap_read	lib/kernel/bitmap.c	/^bitmap_read (struct bitmap *b, struct file *file) /
+bitmap_reset	lib/kernel/bitmap.c	/^bitmap_reset (struct bitmap *b, size_t bit_idx) $/
+bitmap_scan	lib/kernel/bitmap.c	/^bitmap_scan (const struct bitmap *b, size_t start,/
+bitmap_scan_and_flip	lib/kernel/bitmap.c	/^bitmap_scan_and_flip (struct bitmap *b, size_t sta/
+bitmap_set	lib/kernel/bitmap.c	/^bitmap_set (struct bitmap *b, size_t idx, bool val/
+bitmap_set_all	lib/kernel/bitmap.c	/^bitmap_set_all (struct bitmap *b, bool value) $/
+bitmap_set_multiple	lib/kernel/bitmap.c	/^bitmap_set_multiple (struct bitmap *b, size_t star/
+bitmap_size	lib/kernel/bitmap.c	/^bitmap_size (const struct bitmap *b)$/
+bitmap_test	lib/kernel/bitmap.c	/^bitmap_test (const struct bitmap *b, size_t idx) $/
+bitmap_write	lib/kernel/bitmap.c	/^bitmap_write (const struct bitmap *b, struct file /
+block_size	threads/malloc.c	/^block_size (void *block) $/
+block_to_arena	threads/malloc.c	/^block_to_arena (struct block *b)$/
+bsearch	lib/stdlib.c	/^bsearch (const void *key, const void *array, size_/
+busy_wait	devices/timer.c	/^busy_wait (int64_t loops) $/
+byte_cnt	lib/kernel/bitmap.c	/^byte_cnt (size_t bit_cnt)$/
+byte_to_sector	filesys/inode.c	/^byte_to_sector (const struct inode *inode, off_t p/
+bytes_to_sectors	filesys/inode.c	/^bytes_to_sectors (off_t size)$/
+calloc	threads/malloc.c	/^calloc (size_t a, size_t b) $/
+calloc	threads/malloc.h	/^void *calloc (size_t, size_t) __attribute__ ((mall/
+chdir	lib/user/syscall.c	/^chdir (const char *dir)$/
+check_device_type	devices/disk.c	/^check_device_type (struct disk *d) $/
+clear_row	devices/vga.c	/^clear_row (size_t y) $/
+close	lib/user/syscall.c	/^close (int fd)$/
+cls	devices/vga.c	/^cls (void)$/
+compare_thunk	lib/stdlib.c	/^compare_thunk (const void *a, const void *b, void /
+cond_broadcast	threads/synch.c	/^cond_broadcast (struct condition *cond, struct loc/
+cond_init	threads/synch.c	/^cond_init (struct condition *cond)$/
+cond_signal	threads/synch.c	/^cond_signal (struct condition *cond, struct lock */
+cond_wait	threads/synch.c	/^cond_wait (struct condition *cond, struct lock *lo/
+console_init	lib/kernel/console.c	/^console_init (void) $/
+console_locked_by_current_thread	lib/kernel/console.c	/^console_locked_by_current_thread (void) $/
+console_panic	lib/kernel/console.c	/^console_panic (void) $/
+console_print_stats	lib/kernel/console.c	/^console_print_stats (void) $/
+create	lib/user/syscall.c	/^create (const char *file, unsigned initial_size)$/
+debug_backtrace	lib/debug.c	/^debug_backtrace (void) $/
+debug_panic	lib/user/debug.c	/^debug_panic (const char *file, int line, const cha/
+debug_panic	lib/debug.h	/^void debug_panic (const char *file, int line, cons/
+debug_panic	lib/kernel/debug.c	/^debug_panic (const char *file, int line, const cha/
+dir_add	filesys/directory.c	/^dir_add (struct dir *dir, const char *name, disk_s/
+dir_close	filesys/directory.c	/^dir_close (struct dir *dir) $/
+dir_create	filesys/directory.c	/^dir_create (disk_sector_t sector, size_t entry_cnt/
+dir_get_inode	filesys/directory.c	/^dir_get_inode (struct dir *dir) $/
+dir_lookup	filesys/directory.c	/^dir_lookup (const struct dir *dir, const char *nam/
+dir_open	filesys/directory.c	/^dir_open (struct inode *inode) $/
+dir_open_root	filesys/directory.c	/^dir_open_root (void)$/
+dir_readdir	filesys/directory.c	/^dir_readdir (struct dir *dir, char name[NAME_MAX +/
+dir_remove	filesys/directory.c	/^dir_remove (struct dir *dir, const char *name) $/
+dir_reopen	filesys/directory.c	/^dir_reopen (struct dir *dir) $/
+disk_get	devices/disk.c	/^disk_get (int chan_no, int dev_no) $/
+disk_init	devices/disk.c	/^disk_init (void) $/
+disk_print_stats	devices/disk.c	/^disk_print_stats (void) $/
+disk_read	devices/disk.c	/^disk_read (struct disk *d, disk_sector_t sec_no, v/
+disk_size	devices/disk.c	/^disk_size (struct disk *d) $/
+disk_write	devices/disk.c	/^disk_write (struct disk *d, disk_sector_t sec_no, /
+divl	lib/arithmetic.c	/^divl (uint64_t n, uint32_t d)$/
+do_compare	lib/stdlib.c	/^do_compare (unsigned char *array, size_t a_idx, si/
+do_format	filesys/filesys.c	/^do_format (void)$/
+do_swap	lib/stdlib.c	/^do_swap (unsigned char *array, size_t a_idx, size_/
+elem_cnt	lib/kernel/bitmap.c	/^elem_cnt (size_t bit_cnt)$/
+elem_idx	lib/kernel/bitmap.c	/^elem_idx (size_t bit_idx) $/
+exception_init	userprog/exception.c	/^exception_init (void) $/
+exception_print_stats	userprog/exception.c	/^exception_print_stats (void) $/
+exec	lib/user/syscall.c	/^exec (const char *file)$/
+exit	lib/user/syscall.c	/^exit (int status)$/
+file_allow_write	filesys/file.c	/^file_allow_write (struct file *file) $/
+file_close	filesys/file.c	/^file_close (struct file *file) $/
+file_deny_write	filesys/file.c	/^file_deny_write (struct file *file) $/
+file_get_inode	filesys/file.c	/^file_get_inode (struct file *file) $/
+file_length	filesys/file.c	/^file_length (struct file *file) $/
+file_open	filesys/file.c	/^file_open (struct inode *inode) $/
+file_read	filesys/file.c	/^file_read (struct file *file, void *buffer, off_t /
+file_read_at	filesys/file.c	/^file_read_at (struct file *file, void *buffer, off/
+file_reopen	filesys/file.c	/^file_reopen (struct file *file) $/
+file_seek	filesys/file.c	/^file_seek (struct file *file, off_t new_pos)$/
+file_tell	filesys/file.c	/^file_tell (struct file *file) $/
+file_write	filesys/file.c	/^file_write (struct file *file, const void *buffer,/
+file_write_at	filesys/file.c	/^file_write_at (struct file *file, const void *buff/
+filesize	lib/user/syscall.c	/^filesize (int fd) $/
+filesys_create	filesys/filesys.c	/^filesys_create (const char *name, off_t initial_si/
+filesys_done	filesys/filesys.c	/^filesys_done (void) $/
+filesys_init	filesys/filesys.c	/^filesys_init (bool format) $/
+filesys_open	filesys/filesys.c	/^filesys_open (const char *name)$/
+filesys_remove	filesys/filesys.c	/^filesys_remove (const char *name) $/
+find_bucket	lib/kernel/hash.c	/^find_bucket (struct hash *h, struct hash_elem *e) /
+find_cursor	devices/vga.c	/^find_cursor (size_t *x, size_t *y) $/
+find_elem	lib/kernel/hash.c	/^find_elem (struct hash *h, struct list *bucket, st/
+find_end_of_run	lib/kernel/list.c	/^find_end_of_run (struct list_elem *a, struct list_/
+flush	lib/user/console.c	/^flush (struct vhprintf_aux *aux)$/
+format_integer	lib/stdio.c	/^format_integer (uintmax_t value, bool is_signed, b/
+format_string	lib/stdio.c	/^format_string (const char *string, int length,$/
+free	threads/malloc.c	/^free (void *p) $/
+free_map_allocate	filesys/free-map.c	/^free_map_allocate (size_t cnt, disk_sector_t *sect/
+free_map_close	filesys/free-map.c	/^free_map_close (void) $/
+free_map_create	filesys/free-map.c	/^free_map_create (void) $/
+free_map_init	filesys/free-map.c	/^free_map_init (void) $/
+free_map_open	filesys/free-map.c	/^free_map_open (void) $/
+free_map_release	filesys/free-map.c	/^free_map_release (disk_sector_t sector, size_t cnt/
+fsutil_cat	filesys/fsutil.c	/^fsutil_cat (char **argv)$/
+fsutil_get	filesys/fsutil.c	/^fsutil_get (char **argv)$/
+fsutil_ls	filesys/fsutil.c	/^fsutil_ls (char **argv UNUSED) $/
+fsutil_put	filesys/fsutil.c	/^fsutil_put (char **argv) $/
+fsutil_rm	filesys/fsutil.c	/^fsutil_rm (char **argv) $/
+gdt	threads/loader.S	/^gdt:$/
+gdt_init	userprog/gdt.c	/^gdt_init (void)$/
+gdtdesc	threads/loader.S	/^gdtdesc:$/
+halt	lib/user/syscall.h	/^void halt (void) NO_RETURN;$/
+halt	lib/user/syscall.c	/^halt (void) $/
+hash_apply	lib/kernel/hash.c	/^hash_apply (struct hash *h, hash_action_func *acti/
+hash_bytes	lib/kernel/hash.c	/^hash_bytes (const void *buf_, size_t size)$/
+hash_clear	lib/kernel/hash.c	/^hash_clear (struct hash *h, hash_action_func *dest/
+hash_cur	lib/kernel/hash.c	/^hash_cur (struct hash_iterator *i) $/
+hash_delete	lib/kernel/hash.c	/^hash_delete (struct hash *h, struct hash_elem *e)$/
+hash_destroy	lib/kernel/hash.c	/^hash_destroy (struct hash *h, hash_action_func *de/
+hash_empty	lib/kernel/hash.c	/^hash_empty (struct hash *h) $/
+hash_entry	lib/kernel/hash.h	/^#define hash_entry(HASH_ELEM, STRUCT, MEMBER)     /
+hash_find	lib/kernel/hash.c	/^hash_find (struct hash *h, struct hash_elem *e) $/
+hash_first	lib/kernel/hash.c	/^hash_first (struct hash_iterator *i, struct hash */
+hash_init	lib/kernel/hash.c	/^hash_init (struct hash *h,$/
+hash_insert	lib/kernel/hash.c	/^hash_insert (struct hash *h, struct hash_elem *new/
+hash_int	lib/kernel/hash.c	/^hash_int (int i) $/
+hash_next	lib/kernel/hash.c	/^hash_next (struct hash_iterator *i)$/
+hash_replace	lib/kernel/hash.c	/^hash_replace (struct hash *h, struct hash_elem *ne/
+hash_size	lib/kernel/hash.c	/^hash_size (struct hash *h) $/
+hash_string	lib/kernel/hash.c	/^hash_string (const char *s_) $/
+heapify	lib/stdlib.c	/^heapify (unsigned char *array, size_t i, size_t cn/
+hex_dump	lib/stdio.c	/^hex_dump (uintptr_t ofs, const void *buf_, size_t /
+hprintf	lib/user/console.c	/^hprintf (int handle, const char *format, ...) $/
+hprintf	lib/user/stdio.h	/^int hprintf (int, const char *, ...) PRINTF_FORMAT/
+identify_ata_device	devices/disk.c	/^identify_ata_device (struct disk *d) $/
+idle	threads/thread.c	/^idle (void *idle_started_ UNUSED) $/
+inb	threads/io.h	/^inb (uint16_t port)$/
+init	devices/vga.c	/^init (void)$/
+init_poll	devices/serial.c	/^init_poll (void) $/
+init_pool	threads/palloc.c	/^init_pool (struct pool *p, void *base, size_t page/
+init_thread	threads/thread.c	/^init_thread (struct thread *t, const char *name, i/
+inl	threads/io.h	/^inl (uint16_t port)$/
+inode_allow_write	filesys/inode.c	/^inode_allow_write (struct inode *inode) $/
+inode_close	filesys/inode.c	/^inode_close (struct inode *inode) $/
+inode_create	filesys/inode.c	/^inode_create (disk_sector_t sector, off_t length)$/
+inode_deny_write	filesys/inode.c	/^inode_deny_write (struct inode *inode) $/
+inode_get_inumber	filesys/inode.c	/^inode_get_inumber (const struct inode *inode)$/
+inode_init	filesys/inode.c	/^inode_init (void) $/
+inode_length	filesys/inode.c	/^inode_length (const struct inode *inode)$/
+inode_open	filesys/inode.c	/^inode_open (disk_sector_t sector) $/
+inode_read_at	filesys/inode.c	/^inode_read_at (struct inode *inode, void *buffer_,/
+inode_remove	filesys/inode.c	/^inode_remove (struct inode *inode) $/
+inode_reopen	filesys/inode.c	/^inode_reopen (struct inode *inode)$/
+inode_write_at	filesys/inode.c	/^inode_write_at (struct inode *inode, const void *b/
+inplace_merge	lib/kernel/list.c	/^inplace_merge (struct list_elem *a0, struct list_e/
+input_full	devices/input.c	/^input_full (void) $/
+input_getc	devices/input.c	/^input_getc (void) $/
+input_init	devices/input.c	/^input_init (void) $/
+input_putc	devices/input.c	/^input_putc (uint8_t key) $/
+input_sector	devices/disk.c	/^input_sector (struct channel *c, void *sector) $/
+insb	threads/io.h	/^insb (uint16_t port, void *addr, size_t cnt)$/
+insert_elem	lib/kernel/hash.c	/^insert_elem (struct hash *h, struct list *bucket, /
+insl	threads/io.h	/^insl (uint16_t port, void *addr, size_t cnt)$/
+install_page	userprog/process.c	/^install_page (void *upage, void *kpage, bool writa/
+insw	threads/io.h	/^insw (uint16_t port, void *addr, size_t cnt)$/
+interrupt_handler	devices/disk.c	/^interrupt_handler (struct intr_frame *f) $/
+intq_empty	devices/intq.c	/^intq_empty (const struct intq *q) $/
+intq_full	devices/intq.c	/^intq_full (const struct intq *q) $/
+intq_getc	devices/intq.c	/^intq_getc (struct intq *q) $/
+intq_init	devices/intq.c	/^intq_init (struct intq *q) $/
+intq_putc	devices/intq.c	/^intq_putc (struct intq *q, uint8_t byte) $/
+intr_context	threads/interrupt.c	/^intr_context (void) $/
+intr_disable	threads/interrupt.c	/^intr_disable (void) $/
+intr_dump_frame	threads/interrupt.c	/^intr_dump_frame (const struct intr_frame *f) $/
+intr_enable	threads/interrupt.c	/^intr_enable (void) $/
+intr_entry	threads/intr-stubs.S	/^intr_entry:$/
+intr_exit	threads/intr-stubs.S	/^intr_exit:$/
+intr_get_level	threads/interrupt.c	/^intr_get_level (void) $/
+intr_handler	threads/interrupt.c	/^intr_handler (struct intr_frame *frame) $/
+intr_init	threads/interrupt.c	/^intr_init (void)$/
+intr_name	threads/interrupt.c	/^intr_name (uint8_t vec) $/
+intr_register_ext	threads/interrupt.c	/^intr_register_ext (uint8_t vec_no, intr_handler_fu/
+intr_register_int	threads/interrupt.c	/^intr_register_int (uint8_t vec_no, int dpl, enum i/
+intr_set_level	threads/interrupt.c	/^intr_set_level (enum intr_level level) $/
+intr_stubs	threads/intr-stubs.S	/^intr_stubs:$/
+intr_yield_on_return	threads/interrupt.c	/^intr_yield_on_return (void) $/
+inumber	lib/user/syscall.c	/^inumber (int fd) $/
+invalidate_pagedir	userprog/pagedir.c	/^invalidate_pagedir (uint32_t *pd) $/
+inw	threads/io.h	/^inw (uint16_t port)$/
+is_interior	lib/kernel/list.c	/^is_interior (struct list_elem *elem)$/
+is_kernel_vaddr	threads/vaddr.h	/^is_kernel_vaddr (const void *vaddr) $/
+is_power_of_2	lib/kernel/hash.c	/^is_power_of_2 (size_t x) $/
+is_sorted	lib/kernel/list.c	/^static bool is_sorted (struct list_elem *a, struct/
+is_sorted	lib/kernel/list.c	/^is_sorted (struct list_elem *a, struct list_elem */
+is_tail	lib/kernel/list.c	/^is_tail (struct list_elem *elem)$/
+is_thread	threads/thread.c	/^static bool is_thread (struct thread *) UNUSED;$/
+is_thread	threads/thread.c	/^is_thread (struct thread *t)$/
+is_user_vaddr	threads/vaddr.h	/^is_user_vaddr (const void *vaddr) $/
+isalnum	lib/ctype.h	/^static inline int isalnum (int c) { return isalpha/
+isalpha	lib/ctype.h	/^static inline int isalpha (int c) { return islower/
+isascii	lib/ctype.h	/^static inline int isascii (int c) { return c >= 0 /
+isblank	lib/ctype.h	/^static inline int isblank (int c) { return c == ' /
+iscntrl	lib/ctype.h	/^static inline int iscntrl (int c) { return (c >= 0/
+isdigit	lib/ctype.h	/^static inline int isdigit (int c) { return c >= '0/
+isdir	lib/user/syscall.c	/^isdir (int fd) $/
+isgraph	lib/ctype.h	/^static inline int isgraph (int c) { return c > 32 /
+islower	lib/ctype.h	/^static inline int islower (int c) { return c >= 'a/
+isprint	lib/ctype.h	/^static inline int isprint (int c) { return c >= 32/
+ispunct	lib/ctype.h	/^static inline int ispunct (int c) {$/
+isspace	lib/ctype.h	/^static inline int isspace (int c) {$/
+issue_pio_command	devices/disk.c	/^issue_pio_command (struct channel *c, uint8_t comm/
+isupper	lib/ctype.h	/^static inline int isupper (int c) { return c >= 'A/
+isxdigit	lib/ctype.h	/^static inline int isxdigit (int c) {$/
+kbd_init	devices/kbd.c	/^kbd_init (void) $/
+kbd_print_stats	devices/kbd.c	/^kbd_print_stats (void) $/
+kernel_thread	threads/thread.c	/^kernel_thread (thread_func *function, void *aux) $/
+keyboard_interrupt	devices/kbd.c	/^keyboard_interrupt (struct intr_frame *args UNUSED/
+kill	userprog/exception.c	/^kill (struct intr_frame *f) $/
+last_mask	lib/kernel/bitmap.c	/^last_mask (const struct bitmap *b) $/
+list_back	lib/kernel/list.c	/^list_back (struct list *list)$/
+list_begin	lib/kernel/list.c	/^list_begin (struct list *list)$/
+list_elem_to_hash_elem	lib/kernel/hash.c	/^#define list_elem_to_hash_elem(LIST_ELEM)         /
+list_empty	lib/kernel/list.c	/^list_empty (struct list *list)$/
+list_end	lib/kernel/list.c	/^list_end (struct list *list)$/
+list_entry	lib/kernel/list.h	/^#define list_entry(LIST_ELEM, STRUCT, MEMBER)     /
+list_front	lib/kernel/list.c	/^list_front (struct list *list)$/
+list_head	lib/kernel/list.c	/^list_head (struct list *list) $/
+list_init	lib/kernel/list.c	/^list_init (struct list *list)$/
+list_insert	lib/kernel/list.c	/^list_insert (struct list_elem *before, struct list/
+list_insert_back_ordered	lib/kernel/list.c	/^list_insert_back_ordered (struct list *list, struc/
+list_insert_ordered	lib/kernel/list.c	/^list_insert_ordered (struct list *list, struct lis/
+list_max	lib/kernel/list.c	/^list_max (struct list *list, list_less_func *less,/
+list_min	lib/kernel/list.c	/^list_min (struct list *list, list_less_func *less,/
+list_next	lib/kernel/list.c	/^list_next (struct list_elem *elem)$/
+list_pop_back	lib/kernel/list.c	/^list_pop_back (struct list *list)$/
+list_pop_front	lib/kernel/list.c	/^list_pop_front (struct list *list)$/
+list_prev	lib/kernel/list.c	/^list_prev (struct list_elem *elem)$/
+list_push_back	lib/kernel/list.c	/^list_push_back (struct list *list, struct list_ele/
+list_push_front	lib/kernel/list.c	/^list_push_front (struct list *list, struct list_el/
+list_rbegin	lib/kernel/list.c	/^list_rbegin (struct list *list) $/
+list_remove	lib/kernel/list.c	/^list_remove (struct list_elem *elem)$/
+list_rend	lib/kernel/list.c	/^list_rend (struct list *list) $/
+list_reverse	lib/kernel/list.c	/^list_reverse (struct list *list)$/
+list_size	lib/kernel/list.c	/^list_size (struct list *list)$/
+list_sort	lib/kernel/list.c	/^list_sort (struct list *list, list_less_func *less/
+list_splice	lib/kernel/list.c	/^list_splice (struct list_elem *before,$/
+list_tail	lib/kernel/list.c	/^list_tail (struct list *list) $/
+list_unique	lib/kernel/list.c	/^list_unique (struct list *list, struct list *dupli/
+load	userprog/process.c	/^load (const char *file_name, void (**eip) (void), /
+load_segment	userprog/process.c	/^load_segment (struct file *file, off_t ofs, uint8_/
+lock_acquire	threads/synch.c	/^lock_acquire (struct lock *lock)$/
+lock_held_by_current_thread	threads/synch.c	/^lock_held_by_current_thread (const struct lock *lo/
+lock_init	threads/synch.c	/^lock_init (struct lock *lock)$/
+lock_release	threads/synch.c	/^lock_release (struct lock *lock) $/
+lock_try_acquire	threads/synch.c	/^lock_try_acquire (struct lock *lock)$/
+lookup	filesys/directory.c	/^lookup (const struct dir *dir, const char *name,$/
+lookup_page	userprog/pagedir.c	/^lookup_page (uint32_t *pd, const void *vaddr, bool/
+make_code_desc	userprog/gdt.c	/^make_code_desc (int dpl)$/
+make_data_desc	userprog/gdt.c	/^make_data_desc (int dpl)$/
+make_gate	threads/interrupt.c	/^make_gate (void (*function) (void), int dpl, int t/
+make_gdtr_operand	userprog/gdt.c	/^make_gdtr_operand (uint16_t limit, void *base)$/
+make_idtr_operand	threads/interrupt.c	/^make_idtr_operand (uint16_t limit, void *base)$/
+make_intr_gate	threads/interrupt.c	/^make_intr_gate (void (*function) (void), int dpl)$/
+make_seg_desc	userprog/gdt.c	/^make_seg_desc (uint32_t base,$/
+make_trap_gate	threads/interrupt.c	/^make_trap_gate (void (*function) (void), int dpl)$/
+make_tss_desc	userprog/gdt.c	/^make_tss_desc (void *laddr)$/
+malloc	threads/malloc.c	/^malloc (size_t size) $/
+malloc	threads/malloc.h	/^void *malloc (size_t) __attribute__ ((malloc));$/
+malloc_init	threads/malloc.c	/^malloc_init (void) $/
+map_key	devices/kbd.c	/^map_key (const struct keymap k[], unsigned scancod/
+memchr	lib/string.c	/^memchr (const void *block_, int ch_, size_t size) /
+memcmp	lib/string.c	/^memcmp (const void *a_, const void *b_, size_t siz/
+memcpy	lib/string.c	/^memcpy (void *dst_, const void *src_, size_t size)/
+memmove	lib/string.c	/^memmove (void *dst_, const void *src_, size_t size/
+memset	lib/string.c	/^memset (void *dst_, int value, size_t size) $/
+mkdir	lib/user/syscall.c	/^mkdir (const char *dir)$/
+mmap	lib/user/syscall.c	/^mmap (int fd, void *addr)$/
+move_cursor	devices/vga.c	/^move_cursor (void) $/
+munmap	lib/user/syscall.c	/^munmap (mapid_t mapid)$/
+newline	devices/vga.c	/^newline (void)$/
+next	devices/intq.c	/^next (int pos) $/
+next_thread_to_run	threads/thread.c	/^next_thread_to_run (void) $/
+nlz	lib/arithmetic.c	/^nlz (uint32_t x) $/
+offsetof	lib/stddef.h	/^#define offsetof(TYPE, MEMBER) ((size_t) &((TYPE */
+open	lib/user/syscall.c	/^open (const char *file)$/
+outb	threads/io.h	/^outb (uint16_t port, uint8_t data)$/
+outl	threads/io.h	/^outl (uint16_t port, uint32_t data)$/
+output_dup	lib/stdio.c	/^output_dup (char ch, size_t cnt, void (*output) (c/
+output_sector	devices/disk.c	/^output_sector (struct channel *c, const void *sect/
+outsb	threads/io.h	/^outsb (uint16_t port, const void *addr, size_t cnt/
+outsl	threads/io.h	/^outsl (uint16_t port, const void *addr, size_t cnt/
+outsw	threads/io.h	/^outsw (uint16_t port, const void *addr, size_t cnt/
+outw	threads/io.h	/^outw (uint16_t port, uint16_t data)$/
+page_fault	userprog/exception.c	/^page_fault (struct intr_frame *f) $/
+page_from_pool	threads/palloc.c	/^page_from_pool (const struct pool *pool, void *pag/
+pagedir_activate	userprog/pagedir.c	/^pagedir_activate (uint32_t *pd) $/
+pagedir_clear_page	userprog/pagedir.c	/^pagedir_clear_page (uint32_t *pd, void *upage) $/
+pagedir_create	userprog/pagedir.c	/^pagedir_create (void) $/
+pagedir_destroy	userprog/pagedir.c	/^pagedir_destroy (uint32_t *pd) $/
+pagedir_get_page	userprog/pagedir.c	/^pagedir_get_page (uint32_t *pd, const void *uaddr)/
+pagedir_is_accessed	userprog/pagedir.c	/^pagedir_is_accessed (uint32_t *pd, const void *vpa/
+pagedir_is_dirty	userprog/pagedir.c	/^pagedir_is_dirty (uint32_t *pd, const void *vpage)/
+pagedir_set_accessed	userprog/pagedir.c	/^pagedir_set_accessed (uint32_t *pd, const void *vp/
+pagedir_set_dirty	userprog/pagedir.c	/^pagedir_set_dirty (uint32_t *pd, const void *vpage/
+pagedir_set_page	userprog/pagedir.c	/^pagedir_set_page (uint32_t *pd, void *upage, void /
+paging_init	threads/init.c	/^paging_init (void)$/
+palloc_free_multiple	threads/palloc.c	/^palloc_free_multiple (void *pages, size_t page_cnt/
+palloc_free_page	threads/palloc.c	/^palloc_free_page (void *page) $/
+palloc_get_multiple	threads/palloc.c	/^palloc_get_multiple (enum palloc_flags flags, size/
+palloc_get_page	threads/palloc.c	/^palloc_get_page (enum palloc_flags flags) $/
+palloc_init	threads/palloc.c	/^palloc_init (void) $/
+panic	threads/loader.S	/^panic:  .code16			# We only panic in real mode.$/
+panic_message	threads/loader.S	/^panic_message:$/
+parse_arguments	userprog/process.c	/^parse_arguments(char *file_name, char *arguments, /
+parse_conversion	lib/stdio.c	/^parse_conversion (const char *format, struct print/
+parse_options	threads/init.c	/^parse_options (char **argv) $/
+pd_no	threads/pte.h	/^static inline uintptr_t pd_no (const void *va) {$/
+pde_create	threads/pte.h	/^static inline uint32_t pde_create (uint32_t *pt) {/
+pde_get_pt	threads/pte.h	/^static inline uint32_t *pde_get_pt (uint32_t pde) /
+pg_no	threads/vaddr.h	/^static inline uintptr_t pg_no (const void *va) {$/
+pg_ofs	threads/vaddr.h	/^static inline unsigned pg_ofs (const void *va) {$/
+pg_round_down	threads/vaddr.h	/^static inline void *pg_round_down (const void *va)/
+pg_round_up	threads/vaddr.h	/^static inline void *pg_round_up (const void *va) {/
+pic_end_of_interrupt	threads/interrupt.c	/^pic_end_of_interrupt (int irq) $/
+pic_init	threads/interrupt.c	/^pic_init (void)$/
+power_off	threads/init.h	/^void power_off (void) NO_RETURN;$/
+power_off	threads/init.c	/^power_off (void) $/
+print_ata_string	devices/disk.c	/^print_ata_string (char *string, size_t size) $/
+print_stats	threads/init.c	/^print_stats (void) $/
+printf	lib/stdio.c	/^printf (const char *format, ...) $/
+printf	lib/stdio.h	/^int printf (const char *, ...) PRINTF_FORMAT (1, 2/
+process_activate	userprog/process.c	/^process_activate (void)$/
+process_execute	userprog/process.c	/^process_execute (const char *file_name) $/
+process_exit	userprog/process.c	/^process_exit (void)$/
+process_wait	userprog/process.c	/^process_wait (tid_t child_tid) $/
+pt_no	threads/pte.h	/^static inline unsigned pt_no (const void *va) {$/
+pte_create_kernel	threads/pte.h	/^static inline uint32_t pte_create_kernel (void *pa/
+pte_create_user	threads/pte.h	/^static inline uint32_t pte_create_user (void *page/
+pte_get_page	threads/pte.h	/^static inline void *pte_get_page (uint32_t pte) {$/
+ptov	threads/vaddr.h	/^ptov (uintptr_t paddr)$/
+putbuf	lib/kernel/console.c	/^putbuf (const char *buffer, size_t n) $/
+putc_poll	devices/serial.c	/^putc_poll (uint8_t byte) $/
+putchar	lib/user/console.c	/^putchar (int c) $/
+putchar	lib/kernel/console.c	/^putchar (int c) $/
+putchar_have_lock	lib/kernel/console.c	/^putchar_have_lock (uint8_t c) $/
+puts	lib/user/console.c	/^puts (const char *s) $/
+puts	lib/kernel/console.c	/^puts (const char *s) $/
+qsort	lib/stdlib.c	/^qsort (void *array, size_t cnt, size_t size,$/
+ram_init	threads/init.c	/^ram_init (void) $/
+ram_pgs	threads/loader.S	/^ram_pgs:$/
+random_bytes	lib/random.c	/^random_bytes (void *buf_, size_t size) $/
+random_init	lib/random.c	/^random_init (unsigned seed)$/
+random_ulong	lib/random.c	/^random_ulong (void) $/
+read	lib/user/syscall.c	/^read (int fd, void *buffer, unsigned size)$/
+read_command_line	threads/init.c	/^read_command_line (void) $/
+read_sector	threads/loader.S	/^read_sector:$/
+readdir	lib/user/syscall.c	/^readdir (int fd, char name[READDIR_MAX_LEN + 1]) $/
+real_time_sleep	devices/timer.c	/^real_time_sleep (int64_t num, int32_t denom) $/
+realloc	threads/malloc.c	/^realloc (void *old_block, size_t new_size) $/
+reg_alt_status	devices/disk.c	/^#define reg_alt_status(CHANNEL) reg_ctl (CHANNEL) /
+reg_command	devices/disk.c	/^#define reg_command(CHANNEL) reg_status (CHANNEL) /
+reg_ctl	devices/disk.c	/^#define reg_ctl(CHANNEL) ((CHANNEL)->reg_base + 0x/
+reg_data	devices/disk.c	/^#define reg_data(CHANNEL) ((CHANNEL)->reg_base + 0/
+reg_device	devices/disk.c	/^#define reg_device(CHANNEL) ((CHANNEL)->reg_base +/
+reg_error	devices/disk.c	/^#define reg_error(CHANNEL) ((CHANNEL)->reg_base + /
+reg_lbah	devices/disk.c	/^#define reg_lbah(CHANNEL) ((CHANNEL)->reg_base + 5/
+reg_lbal	devices/disk.c	/^#define reg_lbal(CHANNEL) ((CHANNEL)->reg_base + 3/
+reg_lbam	devices/disk.c	/^#define reg_lbam(CHANNEL) ((CHANNEL)->reg_base + 4/
+reg_nsect	devices/disk.c	/^#define reg_nsect(CHANNEL) ((CHANNEL)->reg_base + /
+reg_status	devices/disk.c	/^#define reg_status(CHANNEL) ((CHANNEL)->reg_base +/
+register_handler	threads/interrupt.c	/^register_handler (uint8_t vec_no, int dpl, enum in/
+rehash	lib/kernel/hash.c	/^rehash (struct hash *h) $/
+release_console	lib/kernel/console.c	/^release_console (void) $/
+remove	lib/user/syscall.c	/^remove (const char *file)$/
+remove_elem	lib/kernel/hash.c	/^remove_elem (struct hash *h, struct hash_elem *e) /
+reset_channel	devices/disk.c	/^reset_channel (struct channel *c) $/
+run_actions	threads/init.c	/^run_actions (char **argv) $/
+run_task	threads/init.c	/^run_task (char **argv)$/
+running_thread	threads/thread.c	/^running_thread (void) $/
+schedule	threads/thread.c	/^schedule (void) $/
+schedule_tail	threads/thread.c	/^schedule_tail (struct thread *prev) $/
+sdiv64	lib/arithmetic.c	/^sdiv64 (int64_t n, int64_t d)$/
+seek	lib/user/syscall.c	/^seek (int fd, unsigned position) $/
+select_device	devices/disk.c	/^select_device (const struct disk *d)$/
+select_device_wait	devices/disk.c	/^select_device_wait (const struct disk *d) $/
+select_sector	devices/disk.c	/^select_sector (struct disk *d, disk_sector_t sec_n/
+sema_down	threads/synch.c	/^sema_down (struct semaphore *sema) $/
+sema_init	threads/synch.c	/^sema_init (struct semaphore *sema, unsigned value)/
+sema_self_test	threads/synch.c	/^sema_self_test (void) $/
+sema_test_helper	threads/synch.c	/^sema_test_helper (void *sema_) $/
+sema_try_down	threads/synch.c	/^sema_try_down (struct semaphore *sema) $/
+sema_up	threads/synch.c	/^sema_up (struct semaphore *sema) $/
+serial_flush	devices/serial.c	/^serial_flush (void) $/
+serial_init_queue	devices/serial.c	/^serial_init_queue (void) $/
+serial_interrupt	devices/serial.c	/^serial_interrupt (struct intr_frame *f UNUSED) $/
+serial_notify	devices/serial.c	/^serial_notify (void) $/
+serial_putc	devices/serial.c	/^serial_putc (uint8_t byte) $/
+set_serial	devices/serial.c	/^set_serial (int bps)$/
+setup_stack	userprog/process.c	/^setup_stack (void **esp) $/
+signal	devices/intq.c	/^signal (struct intq *q UNUSED, struct thread **wai/
+smod64	lib/arithmetic.c	/^smod64 (int64_t n, int64_t d)$/
+snprintf	lib/stdio.c	/^snprintf (char *buffer, size_t buf_size, const cha/
+sort	lib/stdlib.c	/^sort (void *array, size_t cnt, size_t size,$/
+start	threads/start.S	/^start:	call main$/
+start	threads/loader.S	/^start:$/
+start_process	userprog/process.c	/^start_process (void *f_name)$/
+strchr	lib/string.c	/^strchr (const char *string, int c_) $/
+strcmp	lib/string.c	/^strcmp (const char *a_, const char *b_) $/
+strcspn	lib/string.c	/^strcspn (const char *string, const char *stop) $/
+strlcat	lib/string.c	/^strlcat (char *dst, const char *src, size_t size) /
+strlcpy	lib/string.c	/^strlcpy (char *dst, const char *src, size_t size) /
+strlen	lib/string.c	/^strlen (const char *string) $/
+strnlen	lib/string.c	/^strnlen (const char *string, size_t maxlen) $/
+strpbrk	lib/string.c	/^strpbrk (const char *string, const char *stop) $/
+strrchr	lib/string.c	/^strrchr (const char *string, int c_) $/
+strspn	lib/string.c	/^strspn (const char *string, const char *skip) $/
+strstr	lib/string.c	/^strstr (const char *haystack, const char *needle) /
+strtok_r	lib/string.c	/^strtok_r (char *s, const char *delimiters, char **/
+swap	lib/kernel/list.c	/^swap (struct list_elem **a, struct list_elem **b) /
+swap_byte	lib/random.c	/^swap_byte (uint8_t *a, uint8_t *b) $/
+switch_entry	threads/switch.S	/^switch_entry:$/
+switch_threads	threads/switch.S	/^switch_threads:$/
+syscall0	lib/user/syscall.c	/^#define syscall0(NUMBER)                          /
+syscall1	lib/user/syscall.c	/^#define syscall1(NUMBER, ARG0)                    /
+syscall2	lib/user/syscall.c	/^#define syscall2(NUMBER, ARG0, ARG1)              /
+syscall3	lib/user/syscall.c	/^#define syscall3(NUMBER, ARG0, ARG1, ARG2)        /
+syscall_close	userprog/syscall.c	/^void syscall_close (int fd)$/
+syscall_create	userprog/syscall.c	/^bool syscall_create (const char *file_name, unsign/
+syscall_exec	userprog/syscall.c	/^int syscall_exec (const char *cmd_line)$/
+syscall_exit	userprog/syscall.c	/^void syscall_exit (int status)$/
+syscall_filesize	userprog/syscall.c	/^int syscall_filesize (int fd)$/
+syscall_handler	userprog/syscall.c	/^syscall_handler (struct intr_frame *f) $/
+syscall_init	userprog/syscall.c	/^syscall_init (void) $/
+syscall_open	userprog/syscall.c	/^int syscall_open (const char *file_name)$/
+syscall_read	userprog/syscall.c	/^int syscall_read (int fd, void *buffer, unsigned s/
+syscall_remove	userprog/syscall.c	/^bool syscall_remove (const char *file_name)$/
+syscall_seek	userprog/syscall.c	/^void syscall_seek (int fd, unsigned position)$/
+syscall_tell	userprog/syscall.c	/^unsigned syscall_tell (int fd)$/
+syscall_wait	userprog/syscall.c	/^int syscall_wait (int pid)$/
+syscall_write	userprog/syscall.c	/^int syscall_write (int fd, const void *buffer, uns/
+tell	lib/user/syscall.c	/^tell (int fd) $/
+thread_block	threads/thread.c	/^thread_block (void) $/
+thread_create	threads/thread.c	/^thread_create (const char *name, int priority,$/
+thread_current	threads/thread.c	/^thread_current (void) $/
+thread_exit	threads/thread.c	/^thread_exit (void) $/
+thread_exit	threads/thread.h	/^void thread_exit (void) NO_RETURN;$/
+thread_get_load_avg	threads/thread.c	/^thread_get_load_avg (void) $/
+thread_get_nice	threads/thread.c	/^thread_get_nice (void) $/
+thread_get_priority	threads/thread.c	/^thread_get_priority (void) $/
+thread_get_recent_cpu	threads/thread.c	/^thread_get_recent_cpu (void) $/
+thread_init	threads/thread.c	/^thread_init (void) $/
+thread_name	threads/thread.c	/^thread_name (void) $/
+thread_print_stats	threads/thread.c	/^thread_print_stats (void) $/
+thread_priority_less_func	threads/thread.c	/^thread_priority_less_func (const struct list_elem /
+thread_second	threads/thread.c	/^thread_second (void)$/
+thread_set_nice	threads/thread.c	/^thread_set_nice (int nice UNUSED) $/
+thread_set_priority	threads/thread.c	/^thread_set_priority (int new_priority) $/
+thread_sleep	threads/thread.c	/^thread_sleep (int64_t ticks)$/
+thread_start	threads/thread.c	/^thread_start (void) $/
+thread_tick	threads/thread.c	/^thread_tick (int64_t ticks) $/
+thread_tid	threads/thread.c	/^thread_tid (void) $/
+thread_unblock	threads/thread.c	/^thread_unblock (struct thread *t) $/
+thread_update_mlfqs_priority	threads/thread.c	/^thread_update_mlfqs_priority (struct thread *t)$/
+thread_update_priority	threads/thread.c	/^thread_update_priority (void)$/
+thread_yield	threads/thread.c	/^thread_yield (void) $/
+timer_calibrate	devices/timer.c	/^timer_calibrate (void) $/
+timer_elapsed	devices/timer.c	/^timer_elapsed (int64_t then) $/
+timer_init	devices/timer.c	/^timer_init (void) $/
+timer_interrupt	devices/timer.c	/^timer_interrupt (struct intr_frame *args UNUSED)$/
+timer_msleep	devices/timer.c	/^timer_msleep (int64_t ms) $/
+timer_nsleep	devices/timer.c	/^timer_nsleep (int64_t ns) $/
+timer_print_stats	devices/timer.c	/^timer_print_stats (void) $/
+timer_sleep	devices/timer.c	/^timer_sleep (int64_t ticks) $/
+timer_ticks	devices/timer.c	/^timer_ticks (void) $/
+timer_usleep	devices/timer.c	/^timer_usleep (int64_t us) $/
+tolower	lib/ctype.h	/^static inline int tolower (int c) { return isupper/
+too_many_loops	devices/timer.c	/^too_many_loops (unsigned loops) $/
+toupper	lib/ctype.h	/^static inline int toupper (int c) { return islower/
+tss_get	userprog/tss.c	/^tss_get (void) $/
+tss_init	userprog/tss.c	/^tss_init (void) $/
+tss_update	userprog/tss.c	/^tss_update (void) $/
+turn_off_least_1bit	lib/kernel/hash.c	/^turn_off_least_1bit (size_t x) $/
+udiv64	lib/arithmetic.c	/^udiv64 (uint64_t n, uint64_t d)$/
+umod64	lib/arithmetic.c	/^umod64 (uint64_t n, uint64_t d)$/
+usage	threads/init.c	/^usage (void)$/
+va_arg	lib/stdarg.h	/^#define va_arg(LIST, TYPE)	__builtin_va_arg (LIST,/
+va_copy	lib/stdarg.h	/^#define va_copy(DST, SRC)	__builtin_va_copy (DST, /
+va_end	lib/stdarg.h	/^#define va_end(LIST)            __builtin_va_end (/
+va_start	lib/stdarg.h	/^#define va_start(LIST, ARG)	__builtin_va_start (LI/
+validate_segment	userprog/process.c	/^validate_segment (const struct Elf32_Phdr *phdr, s/
+vga_putc	devices/vga.c	/^vga_putc (int c)$/
+vhprintf	lib/user/console.c	/^vhprintf (int handle, const char *format, va_list /
+vprintf	lib/user/console.c	/^vprintf (const char *format, va_list args) $/
+vprintf	lib/kernel/console.c	/^vprintf (const char *format, va_list args) $/
+vprintf_helper	lib/kernel/console.c	/^vprintf_helper (char c, void *char_cnt_) $/
+vsnprintf	lib/stdio.c	/^vsnprintf (char *buffer, size_t buf_size, const ch/
+vsnprintf_helper	lib/stdio.c	/^vsnprintf_helper (char ch, void *aux_)$/
+vtop	threads/vaddr.h	/^vtop (const void *vaddr)$/
+wait	devices/intq.c	/^wait (struct intq *q UNUSED, struct thread **waite/
+wait	lib/user/syscall.c	/^wait (pid_t pid)$/
+wait_until_idle	devices/disk.c	/^wait_until_idle (const struct disk *d) $/
+wait_while_busy	devices/disk.c	/^wait_while_busy (const struct disk *d) $/
+write	lib/user/syscall.c	/^write (int fd, const void *buffer, unsigned size)$/
+write_ier	devices/serial.c	/^write_ier (void) $/

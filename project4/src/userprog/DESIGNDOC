@@ -1,0 +1,336 @@
+		     +--------------------------+
+			 |          EE 415			|
+		     | PROJECT 2: USER PROGRAMS	|
+		     | 	   DESIGN DOCUMENT     	|
+		     +--------------------------+
+
+---- GROUP ----
+
+>> Fill in the names and email addresses of your group members.
+
+INHO CHO		<inho00@kaist.ac.kr>
+Youngjae Min 		<yjmin313@kaist.ac.kr>
+
+---- PRELIMINARIES ----
+
+>> If you have any preliminary comments on your submission, notes for the
+>> TAs, or extra credit, please give them here.
+
+>> Please cite any offline or online sources you consulted while
+>> preparing your submission, other than the Pintos documentation, course
+>> text, lecture notes,and course staff.
+
+We debated and discussed with team09 where Jaehyung Ha belongs to and 
+team04 where Woohyun Choi and Byungkown Choi belong.
+
+			   ARGUMENT PASSING
+			   ================
+
+---- DATA STRUCTURES ----
+
+>> A1: Copy here the declaration of each new or changed `struct' or
+>> `struct' member, global or static variable, `typedef', or
+>> enumeration.  Identify the purpose of each in 25 words or less.
+
+We didn't change or added 'struct', global or static variable for the 
+purpose of argument passing
+
+---- ALGORITHMS ----
+
+>> A2: Briefly describe how you implemented argument parsing.  How do
+>> you arrange for the elements of argv[] to be in the right order?
+>> How do you avoid overflowing the stack page?
+
+We examined character by character to check the null chracter at the
+end of the string and spaces between arguments. We pushed argv[] in
+the same way. We examined from the null character at the end of the
+command string, character by character to get where each argument starts 
+
+we used 'ASSERT(strlen(file_name) < 4096)' to avoid arguments to overflow
+stack page. By this approach we can avoid overflow on the stack page
+because stack page size in this project is fixed as 4KB.
+
+---- RATIONALE ----
+
+>> A3: Why does Pintos implement strtok_r() but not strtok()?
+
+Dislike real Unix kernel, Pintos execute multiple processes as thread. 
+strtok() uses static variable to save the current position in the string.
+However, static variables are shared between threads, there would be a
+race condition.
+  Therefore, Pintos implement strtok_r() in which the pointer to store
+the current position in the string can be explicitly specified as third
+argument instead of using static variable.
+
+>> A4: In Pintos, the kernel separates commands into a executable name
+>> and arguments.  In Unix-like systems, the shell does this
+>> separation.  Identify at least two advantages of the Unix approach.
+
+In the Unix, normally frequently executed binary files reside in '/bin'
+or '/sbin' which are saved in the environment variable PATH. Because 
+shell is responsable for environment variable including PATH, it is much 
+easier to look over whether given executable name exists or not. By parsing 
+executable name and arguemnts in the shell, kernel can load the program 
+in less time, so kernel can save the time for dealing with other more 
+important tasks which shell can not deal with.
+
+			     SYSTEM CALLS
+			     ============
+
+---- DATA STRUCTURES ----
+
+>> B1: Copy here the declaration of each new or changed `struct' or
+>> `struct' member, global or static variable, `typedef', or
+>> enumeration.  Identify the purpose of each in 25 words or less.
+
+struct thread
+  {
+    ...
+	bool load_success;
+	...
+	struct list child_list;
+	struct list_elem child_elem;
+	...
+	struct seamphore exec_sema;
+	struct semaphore wait_sema;
+	...
+	struct file *exec_file;
+	...
+  }
+
+bool load_success:
+This value is for holding status on whether child process has
+succeeded to load executable or not.
+
+struct list child_list:
+list of thread's child which has created by exec system call.
+
+struct list_elem child_elem:
+list element for child_list
+
+struct semaphore exec_sema:
+Just before returning process_execute() function, exec_sema blocks 
+execution with exec_sema to prevent returning without knowing whether 
+child process has succeeded to load or not.
+
+struct semaphore wait_sema:
+This semaphore blocks parent's thread until its waiting child thread 
+terminates.
+
+struct file *exec_file:
+Pointer to the file struct which is executing binary for the thread.
+
+>> B2: Describe how file descriptors are associated with open files.
+>> Are file descriptors unique within the entire OS or just within a
+>> single process?
+
+When system call handler receives a OPEN request, first it retrieves a 
+pointer to a 'struct file' which is defined in file.c and convert it 
+to a file descriptor which is an integer greater than 1 because file 
+descriptor 0 and 1 are used to refer standard input and standard output 
+respectively.
+  Thus, a process should keep track of opened files and whose file
+descriptor and corresponding 'strcut file' pointer. So, even two 
+different process opened single same file, file descriptor for each 
+process can be different. That is, file descriptors are unique just
+within a single process.
+
+---- ALGORITHMS ----
+
+>> B3: Describe your code for reading and writing user data from the
+>> kernel.
+
+First it checks whether given file descriptor is valid, that is, validate
+whether file descriptor is inside the range of 0~130. and by indexing
+file descriptor - 2 (because file descriptor 0 and 1 are used for special
+purpose: stdin(0) and stdout(1)) it checks whether given file descriptor
+is valid or not. If valid, using indexed file struct pointer, it reads
+from or write to the file. file descriptor 0 is used as stdin, so it
+is possible only to read from stdin. Likewise file descriptor 1 is used
+as stdout where kernel can only write to.
+
+>> B4: Suppose a system call causes a full page (4,096 bytes) of data
+>> to be copied from user space into the kernel.  What is the least
+>> and the greatest possible number of inspections of the page table
+>> (e.g. calls to pagedir_get_page()) that might result?  What about
+>> for a system call that only copies 2 bytes of data?  Is there room
+>> for improvement in these numbers, and how much?
+
+When system call causes a full page of data to be copied from user space
+to the kernel. it needs at least 1 time of inspection of the page table
+when we copy actual full page in the virtual memory. But 4096 bytes of
+data reside in two different pages, that is 4096 bytes of data are
+externally fragmented, we need to inspect the page table twice.
+  In case of dealing iwth 2 bytes of data, if 2 bytes of data reside in
+the same page, we just need to inspect the page table 1 time, but
+unfortunately, if 2 bytes of data are externally fragmented, that is, 
+1 byte is at the end of one page and 1 byte is at the begining of another
+page, we need to inspect the page table 2 times. 
+  For the improvement we just need to inspect the beginning of the page
+and process the data from there. In this case, when one block of data
+reside in two different page and kernel exceed one page size, kernel
+will cause page fault and process can be terminated. In this approach
+we can limit maximum number of inspection of page table to 1. 
+
+>> B5: Briefly describe your implementation of the "wait" system call
+>> and how it interacts with process termination.
+
+When system call handler receives WAIT system call, it checks whether
+given pid exists among its child processes. If it does, it checks 
+whether this process's status is PROCESS_DYING or not. if process's
+status is PROCESS_DYING, it means that process terminated its execution
+,so system call handler returns the exit status of that process and
+deallocate from the memory using palloc_free_page() function.
+  If waiting process's status is not PROCESS_DYING, it means still 
+that process is running and did not terminate yet. So, parent process
+tries to down child's 'wait_sema' semaphore so that parent process cannot
+proceed until child process up 'wait_sema' semaphore when child process
+terminates.
+  When process terminates, traversing the child_list, it deallocates all
+processes which has finished its execution because from now on there
+will not be any process which can wait these processes. And if a 
+process is not terminated yet, just set its parent as NULL so that
+when that process terminates it could deallocate at once.
+
+>> B6: Any access to user program memory at a user-specified address
+>> can fail due to a bad pointer value.  Such accesses must cause the
+>> process to be terminated.  System calls are fraught with such
+>> accesses, e.g. a "write" system call requires reading the system
+>> call number from the user stack, then each of the call's three
+>> arguments, then an arbitrary amount of user memory, and any of
+>> these can fail at any point.  This poses a design and
+>> error-handling problem: how do you best avoid obscuring the primary
+>> function of code in a morass of error-handling?  Furthermore, when
+>> an error is detected, how do you ensure that all temporarily
+>> allocated resources (locks, buffers, etc.) are freed?  In a few
+>> paragraphs, describe the strategy or strategies you adopted for
+>> managing these issues.  Give an example.
+
+In out design scheme, before accessing the certain point of the memory
+we always check whether this virtual address is in the user space using
+is_kernel_vaddr() function. If it turns out that given address is not
+the user address space, kernel kills the user process using 
+thread_exit().
+  Even if given virtual address is in the user address space, when
+given user address is invalid (e.g. it is not allocated region) it
+will cuase page fault. To deal with page fault case, we added codes
+to page_fault() function in exception.c so that all allocate memory
+can be surely deallocated.
+  To deallocate succefully all allocated memory regions, we implement
+deallocating related allocated memory code inside the process_exit()
+function, and made all the process finish by process_exit() or 
+thread_exit() function as thread_exit() calls process_exit().
+  For example, when a user program try to access 0xC0000000 it will
+fail to the '!is_kernel_vaddr()' and thread will be terminated by
+thread_exit(-1) function. when a user program try to access 2 bytes
+from 0xbfffffff (let's assume 0xbfffffff is allocated region), it will
+pass '!is_kernel_vaddr()' because the given address is in the user
+address space. However, when kernel try to access 2nd byte which 
+reside in 0xC0000000, it will cause page fault, and inside the 
+page_fault() function, thread will be terminated by thread_exit()
+function and related resources will be freed inside process_exit()
+function.
+
+---- SYNCHRONIZATION ----
+
+>> B7: The "exec" system call returns -1 if loading the new executable
+>> fails, so it cannot return before the new executable has completed
+>> loading.  How does your code ensure this?  How is the load
+>> success/failure status passed back to the thread that calls "exec"?
+
+When system call EXEC is called, systemm call handler redirect this
+request to process_execute() function. In this function, after creating
+a new process by thread_create() it downs current thread's 'exec_sema'
+semaphore and after new executable has completed loading, it ups 
+parent 'exec_sema' seamphore so that parent process can proceed. 
+  And whether child process succeed to load executable or not is stored
+in the thread's load_success value. When child process failed to load
+executable it sets parent's load_success to false, and if it succeeded 
+to load it sets parent's load_success to true. 
+  Therefore, after creating new child process by thread_create, parent
+process can know whether child process has succeeded to load executable
+or not by reading current thread's load_success value. If load_success
+value is false, it immidiately return -1.
+
+>> B8: Consider parent process P with child process C.  How do you
+>> ensure proper synchronization and avoid race conditions when P
+>> calls wait(C) before C exits?  After C exits?  How do you ensure
+>> that all resources are freed in each case?  How about when P
+>> terminates without waiting, before C exits?  After C exits?  Are
+>> there any special cases?
+
+Originally, when process terminates its status is changed to PROCESS_
+DYING and it is deallocated in schedule_tail() function. But in out
+design, we only deallocate process(or thread) in shcedule_tail() only
+when its parent is NULL which means there is no parent who can wait
+this process.
+  If a process' parent is not NULL, even after process's termination 
+it is not be deallocated for the case of parent's wait. When a process
+terminates, it cannot wait for its children, so it checks whether there
+are children who has finished execution by child thread's status and 
+deallocate it if its status is PROCESS_DYING which means it terminated
+its execution. Otherwise, dying parent change child's parent as NULL
+so that when they terminate it can be deallocated at once.
+  By this design technique we can assure that all the cases possible 
+can be handled and all allocated memory is deallocted.
+
+---- RATIONALE ----
+
+>> B9: Why did you choose to implement access to user memory from the
+>> kernel in the way that you did?
+
+Before dereferencing user address, we check whether that address is in
+the kernel space or not by is_kernel_vaddr() function. Additionally we
+handled the case for the page fault exception for the case that user
+program try to enter invalid user memory region. 
+  This chose this method because it is easy to implement and staraight-
+forward to understand.
+
+>> B10: What advantages or disadvantages can you see to your design
+>> for file descriptors?
+
+Out file descriptor is implemented using array which has length of 128.
+By using array one process cannot open more than 128 files. However it
+is much faster to translate from file descriptor to 'struct file' pointer
+compared with using list by which one process can open more than 128 files.
+
+>> B11: The default tid_t to pid_t mapping is the identity mapping.
+>> If you changed it, what advantages are there to your approach?
+
+Because pintos does not support multi thread programming for the user
+program, we did not change mapping policy from tid_t to pid_t.
+
+			   SURVEY QUESTIONS
+			   ================
+
+Answering these questions is optional, but it will help us improve the
+course in future quarters.  Feel free to tell us anything you
+want--these questions are just to spur your thoughts.  You may also
+choose to respond anonymously in the course evaluations at the end of
+the quarter.
+
+>> In your opinion, was this assignment, or any one of the three problems
+>> in it, too easy or too hard?  Did it take too long or too little time?
+
+The level was appropriate and it take moderate time, too.
+
+>> Did you find that working on a particular part of the assignment gave
+>> you greater insight into some aspect of OS design?
+
+Implementing systemcall by our own hands make us understand easier how
+system call works in real kernel.
+
+>> Is there some particular fact or hint we should give students in
+>> future quarters to help them solve the problems?  Conversely, did you
+>> find any of our guidance to be misleading?
+
+We could find nothing.
+
+>> Do you have any suggestions for the TAs to more effectively assist
+>> students, either for future quarters or the remaining projects?
+
+None.
+
+>> Any other comments?
+
+Thank you.

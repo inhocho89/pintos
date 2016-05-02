@@ -1,0 +1,342 @@
+            +-------------------------+
+            | EE 415                  |
+            | PROJECT 4: FILE SYSTEMS |
+            | DESIGN DOCUMENT         |
+            +-------------------------+
+
+---- GROUP ----
+
+>> Fill in the names and email addresses of your group members.
+
+Inho Cho	<inho00@kaist.ac.kr>
+Youngajae Min	<yjmin313@kaist.ac.kr>
+
+---- PRELIMINARIES ----
+
+>> If you have any preliminary comments on your submission, notes for the
+>> TAs, or extra credit, please give them here.
+
+Because of some synchronization problems, it may require various times to
+run 'make grade'. Up to now, the maximum score is 107.3% / 110.0%. If 
+graded score is less than 107.3%, please run test script once more. 
+thank you.
+
+>> Please cite any offline or online sources you consulted while
+>> preparing your submission, other than the Pintos documentation, course
+>> text, lecture notes, and course staff.
+
+Except design document and lecture notes, we did not refrence any other
+resources.
+
+             INDEXED AND EXTENSIBLE FILES
+             ============================
+
+---- DATA STRUCTURES ----
+
+>> A1: Copy here the declaration of each new or changed `struct' or
+>> `struct' member, global or static variable, `typedef', or
+>> enumeration.  Identify the purpose of each in 25 words or less.
+
+struct inode_disk
+  {
+    disk_sector_t direct[10];
+    disk_sector_t indirect;
+    disk_sector_t dindirect;
+    ...
+  }
+
+struct block_map
+  {
+    disk_sector_t blocks[128];
+  }
+
+[inode_disk.direct]
+It stores the sector number of direct data blocks
+
+[inode_disk.indirect]
+It stores the sector number of indirect data blocks.
+
+[inode_disk.dindirect]
+It stores the sector number of doubly indirect data blocks.
+
+[block_map]
+This structure is for indirect data blocks and doubly indirect data
+blocks. It stores 128 data blocks.
+
+[block_map.blocks]
+It stores another data block to redirect.
+
+>> A2: What is the maximum size of a file supported by your inode
+>> structure?  Show your work.
+
+In the inode_disk 10 direct sector numbers supoort 512*10 bytes = 5 kB,
+1 indirect sector number supports 512*128*1 bytes = 256 kB,
+1 doubly indirect sector number supports 512*128*128*1 bytes = 8 MB,
+In total 5kB + 256kB + 8MB = 8.25488 MB of the maximum file size is 
+supportd.
+
+---- SYNCHRONIZATION ----
+
+>> A3: Explain how your code avoids a race if two processes attempt to
+>> extend a file at the same time.
+
+We use file_lock for the all operation on file system. Therefore, when
+one process tries to extend a file it will hold the file_lock which 
+blocks the other process to extend the file size.
+And after the first process finished to extend its file, it will 
+release the file_lock so that second process can proceed to extend
+the same file.
+
+>> A4: Suppose processes A and B both have file F open, both
+>> positioned at end-of-file.  If A reads and B writes F at the same
+>> time, A may read all, part, or none of what B writes.  However, A
+>> may not read data other than what B writes, e.g. if B writes
+>> nonzero data, A is not allowed to see all zeros.  Explain how your
+>> code avoids this race.
+
+In our design, all of file read and write are done through the two
+functions: buffer_cache_write () and buffer_cache_read (). However,
+in every buffer_cache_write () and buffer_cache_read (), they acquire
+lock for each buffer cache. Because every file operation is done
+through buffer cache, by buffer cache lock the situation above can be
+avoided. Additionally, we provices the file_lock which should be 
+acquired before any file related operation. For example, in the above
+situation, when process A call write () process B can't read () 
+because currently process A holds the file_lock. after A finished to
+write it will release file_lock and process B can now read. 
+
+>> A5: Explain how your synchronization design provides "fairness".
+>> File access is "fair" if readers cannot indefinitely block writers
+>> or vice versa.  That is, many processes reading from a file cannot
+>> prevent forever another process from writing the file, and many
+>> processes writing to a file cannot prevent another process forever
+>> from reading the file.
+
+We did not consider aggressive reader and writer case. Rather we 
+expect the readers and wirters to access the file for a short time
+so that readers and writers can not be conflicted.
+
+---- RATIONALE ----
+
+>> A6: Is your inode structure a multilevel index?  If so, why did you
+>> choose this particular combination of direct, indirect, and doubly
+>> indirect blocks?  If not, why did you choose an alternative inode
+>> structure, and what advantages and disadvantages does your
+>> structure have, compared to a multilevel index?
+
+In our inode structure, 10 direct blocks, 1 indirect block, and 1 
+doubly indirect block. Actually with only 1 doubly indirect block we
+can provide the file-size 8MB, but because to read doubly indirect
+block is slow, we provice additional 10 direct blocks which can be
+read the fastest and 1 indirect block which can be read faster than
+doubly indirect block. By doing this, for the small-size file we
+can provide fast access to data blocks.
+
+                SUBDIRECTORIES
+                ==============
+
+---- DATA STRUCTURES ----
+
+>> B1: Copy here the declaration of each new or changed `struct' or
+>> `struct' member, global or static variable, `typedef', or
+>> enumeration.  Identify the purpose of each in 25 words or less.
+
+struct thread
+  {
+    ...
+    struct dir *dir;
+    ...
+  }
+
+struct inode_disk
+  {
+    ...
+    bool is_directory;
+    ...
+  }
+
+[thread.dir]
+This pointer tells current directory of the thread. this dir pointer
+can be changed by chdir () system call.
+
+[inode_disk.is_directory]
+This flag tells whether this inode is directory or not.
+
+---- ALGORITHMS ----
+
+>> B2: Describe your code for traversing a user-specified path.  How
+>> do traversals of absolute and relative paths differ?
+
+Our code traverse the path first by looking at (*path == '/') that is
+the first character of the path is '/' or not. If first character of
+path is '/', that is absoulte path, otherwise, is relative path.
+
+Therefore, we traverse the directories from the root directory if
+path is is absoulte path, or from the current thread's directory
+which was stored inside the thread structure.
+
+---- SYNCHRONIZATION ----
+
+>> B4: How do you prevent races on directory entries?  For example,
+>> only one of two simultaneous attempts to remove a single file
+>> should succeed, as should only one of two simultaneous attempts to
+>> create a file with the same name, and so on.
+
+Becaue a directory itself is also a file, by file_lock we can avoid
+these issues. no two simulataneous write or read can be done.
+
+>> B5: Does your implementation allow a directory to be removed if it
+>> is open by a process or if it is in use as a process's current
+>> working directory?  If so, what happens to that process's future
+>> file system operations?  If not, how do you prevent it?
+
+When a thread set current directory via chdir () system call, it will
+dir_open () which increase the open_count in inode structure. And if
+other thread tries to remove that directory, the directory's removed
+flag is set to true. If a directory's removed flag is set to true, 
+any other thread can not open that directory but just read. When
+other thread changes current directory by chdir () it first closes
+current directory by dir_close () and open new directory by dir_open
+(). dir_close () function call will reduce the open_count for inode
+structure, and if directory's open count is zero, it will be removed 
+from the disk at last. 
+
+---- RATIONALE ----
+
+>> B6: Explain why you chose to represent the current directory of a
+>> process the way you did.
+
+We just store the pointer to the current struct dir so that any
+relative path can be started from the current directory's struct dir.
+For the first time, a thread dir_reopen parent's dir. that is, current
+directory is inherited by parent process. And when current directory
+of the thread is changed via chdir () system call, it closes old
+directory by dir_close () and call dir_open () for a new directory
+so that open count of old directory is reduced and open count of
+new directory is increased.
+
+                 BUFFER CACHE
+                 ============
+
+---- DATA STRUCTURES ----
+
+>> C1: Copy here the declaration of each new or changed `struct' or
+>> `struct' member, global or static variable, `typedef', or
+>> enumeration.  Identify the purpose of each in 25 words or less.
+
+struct cache
+{
+  int sector_pos;
+  char buf[DISK_SECTOR_SIZE];
+  bool accessed;
+  bool dirty;
+  struct lock cache_lock;
+};
+
+struct cache *buffer_cache;
+
+[cache.sector_pos]
+To store buffer cache's disk sector number
+
+[cache.buf]
+To store cached data
+
+[cache.accessed]
+Accessed bit for the buffer cache which will be utilized in the 
+buffer_cache_evict ().
+
+[cache.dirty]
+Dirty bit for the buffer cache which will be utilized in the
+buffer_cache_evict ().
+
+[cache.cache_lock]
+Lock for single buffer cache. It helps synchronization for multiple
+threads.
+
+[buffer_cache]
+It holds buffer cache structures as a global variable.
+
+---- ALGORITHMS ----
+
+>> C2: Describe how your cache replacement algorithm chooses a cache
+>> block to evict.
+
+It uses a clock algorithm where it sees the access bit for the buffer
+cache, and if it was set to true. It means it was accessed recently.
+Then it changed accessed bit to false and see next buffer cache. If
+a buffer cache has accessed bit false, it will evict that buffer cache.
+
+>> C3: Describe your implementation of write-behind.
+
+When cache_write () is called, it first caches to the buffer cache.
+and finally when that buffer cache is evicted, it writes to the actual
+file disk. So when multiple write () system call is called for the same
+sector it will be merged into the buffer cache before writing to the 
+disk, and finally when write () for that sector is not called for a 
+while it would be the victim buffer cache to evict, and when evicted
+it will be written to the disk.
+
+>> C4: Describe your implementation of read-ahead.
+
+We did not support read-ahead.
+
+---- SYNCHRONIZATION ----
+
+>> C5: When one process is actively reading or writing data in a
+>> buffer cache block, how are other processes prevented from evicting
+>> that block?
+
+Every write () and read () system call set the buffer cache's accessed
+bit to true which will prevent that bufer cahce to be evicted.
+
+>> C6: During the eviction of a block from the cache, how are other
+>> processes prevented from attempting to access the block?
+
+Every buffer cache has a cache_lock and if a process want to access 
+certain buffer cache, it requires to acquire lock of that buffer cache.
+By buffer cache's lock we can avoid mentioned situation. When a buffer
+cache is evicted it holds the lock for that buffer cache to prevent
+other process's access to the same buffer cache.
+
+---- RATIONALE ----
+
+>> C7: Describe a file workload likely to benefit from buffer caching,
+>> and workloads likely to benefit from read-ahead and write-behind.
+
+When multiple write () and read () operations for the same sector in
+a short time period, our buffer cache can be beneficial. 
+
+
+               SURVEY QUESTIONS
+               ================
+
+Answering these questions is optional, but it will help us improve the
+course in future quarters.  Feel free to tell us anything you
+want--these questions are just to spur your thoughts.  You may also
+choose to respond anonymously in the course evaluations at the end of
+the quarter.
+
+>> In your opinion, was this assignment, or any one of the three problems
+>> in it, too easy or too hard?  Did it take too long or too little time?
+
+It was moderate.
+
+>> Did you find that working on a particular part of the assignment gave
+>> you greater insight into some aspect of OS design?
+
+Of course. All part of the assignment was helpful.
+
+>> Is there some particular fact or hint we should give students in
+>> future quarters to help them solve the problems?  Conversely, did you
+>> find any of our guidance to be misleading?
+
+Nope.
+
+>> Do you have any suggestions for the TAs to more effectively assist
+>> students in future quarters?
+
+Nope.
+
+>> Any other comments?
+
+Nope.
